@@ -38,9 +38,8 @@ public class DashboardGUI extends JFrame implements CommunityListener, SurveyLis
         super("ניהול סקרי קהילה - Telegram Survey Manager");
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1150, 720);
         setMinimumSize(new Dimension(950, 600));
-        setLocationRelativeTo(null);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         communityPanel = new CommunityPanel();
         creationPanel = new SurveyCreationPanel(surveyService, aiSurveyGenerator);
