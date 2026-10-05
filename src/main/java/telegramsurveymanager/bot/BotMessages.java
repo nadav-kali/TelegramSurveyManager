@@ -46,6 +46,9 @@ public final class BotMessages {
     }
 
     public static String reminder(int answered, int total) {
+        if (answered == 0) {
+            return "⏰ תזכורת: עדיין לא התחלת לענות על הסקר הפעיל (" + total + " שאלות). עדיין יש זמן!";
+        }
         return "⏰ תזכורת: ענית על " + answered + " מתוך " + total +
                 " שאלות בסקר הפעיל. עדיין יש זמן להשלים!";
     }

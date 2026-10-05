@@ -263,13 +263,20 @@ public class SurveyCreationPanel extends JPanel {
 
         int delayMinutes = immediateRadio.isSelected() ? 0 : (Integer) delayMinutesSpinner.getValue();
 
+        // Immediate feedback the instant the user clicks - the actual card switch only
+        // happens once onSurveyScheduled/onSurveyStarted fires from the scheduler thread,
+        // which is normally near-instant but should never leave the button looking inert.
+        startButton.setEnabled(false);
+        communityStatusLabel.setForeground(OK_COLOR);
+        communityStatusLabel.setText("🚀 שולח...");
+
         try {
             surveyService.createSurvey(questions, delayMinutes);
         } catch (RuntimeException ex) {
             errorLabel.setText(ex.getMessage());
+            refreshState();
             return;
         }
-        startButton.setEnabled(false);
     }
 
     private List<Question> collectQuestions() {
