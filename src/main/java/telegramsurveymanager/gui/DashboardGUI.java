@@ -38,9 +38,8 @@ public class DashboardGUI extends JFrame implements CommunityListener, SurveyLis
         super("ניהול סקרי קהילה - Telegram Survey Manager");
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(1150, 720);
         setMinimumSize(new Dimension(950, 600));
-        setLocationRelativeTo(null);
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
 
         communityPanel = new CommunityPanel();
         creationPanel = new SurveyCreationPanel(surveyService, aiSurveyGenerator);
@@ -54,10 +53,15 @@ public class DashboardGUI extends JFrame implements CommunityListener, SurveyLis
         mainArea.add(activePanel, CARD_ACTIVE);
         mainArea.add(resultsPanel, CARD_RESULTS);
 
-        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, communityPanel, mainArea);
-        splitPane.setDividerLocation(340);
-        splitPane.setResizeWeight(0);
-        setContentPane(splitPane);
+        // A plain BorderLayout instead of JSplitPane: CENTER always gets all remaining
+        // width regardless of component orientation, so the survey-creation area (which
+        // needs the room - it has multiple question/option fields) can never end up
+        // squeezed the way it did under JSplitPane + RIGHT_TO_LEFT.
+        communityPanel.setPreferredSize(new Dimension(360, 10));
+        JPanel root = new JPanel(new BorderLayout());
+        root.add(communityPanel, BorderLayout.LINE_END);
+        root.add(mainArea, BorderLayout.CENTER);
+        setContentPane(root);
 
         communityService.addListener(this);
         surveyService.addListener(this);

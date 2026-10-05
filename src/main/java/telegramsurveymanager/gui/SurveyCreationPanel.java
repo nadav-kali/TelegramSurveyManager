@@ -82,19 +82,24 @@ public class SurveyCreationPanel extends JPanel {
         header.setLayout(new BoxLayout(header, BoxLayout.Y_AXIS));
         header.setBorder(new TitledBorder("יצירה אוטומטית עם AI (אופציונלי)"));
 
-        JPanel row = new JPanel(new FlowLayout(FlowLayout.LEADING, 8, 4));
-        row.add(new JLabel("נושא:"));
-        topicField.setColumns(26);
-        row.add(topicField);
-        row.add(new JLabel("מס' שאלות:"));
-        row.add(aiQuestionCountSpinner);
-        row.add(new JLabel("אפשרויות לשאלה:"));
-        row.add(aiOptionCountSpinner);
+        // Two short rows instead of one long one - stays readable even when the
+        // panel is narrow, instead of silently wrapping/clipping the generate button.
+        JPanel topicRow = new JPanel(new FlowLayout(FlowLayout.LEADING, 8, 4));
+        topicRow.add(new JLabel("נושא:"));
+        topicField.setColumns(20);
+        topicRow.add(topicField);
+
+        JPanel optionsRow = new JPanel(new FlowLayout(FlowLayout.LEADING, 8, 4));
+        optionsRow.add(new JLabel("מס' שאלות:"));
+        optionsRow.add(aiQuestionCountSpinner);
+        optionsRow.add(new JLabel("אפשרויות לשאלה:"));
+        optionsRow.add(aiOptionCountSpinner);
         generateWithAiButton.addActionListener(e -> generateWithAi());
-        row.add(generateWithAiButton);
+        optionsRow.add(generateWithAiButton);
 
         aiStatusLabel.setForeground(MUTED_COLOR);
-        header.add(row);
+        header.add(topicRow);
+        header.add(optionsRow);
         header.add(aiStatusLabel);
         return header;
     }
