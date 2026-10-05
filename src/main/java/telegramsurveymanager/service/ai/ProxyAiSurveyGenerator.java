@@ -23,8 +23,18 @@ public class ProxyAiSurveyGenerator implements AiSurveyGenerator {
     private final String token;
 
     public ProxyAiSurveyGenerator(String baseUrl, String token) {
-        this.baseUrl = baseUrl;
-        this.token = token;
+        this.baseUrl = sanitize(baseUrl);
+        this.token = sanitize(token);
+    }
+
+    /**
+     * Strips invisible Unicode format characters (RTL/LTR marks, zero-width
+     * joiners, BOM, ...) that commonly end up in a value pasted from a
+     * right-to-left chat or editor, plus surrounding whitespace. Left in,
+     * these are invisible in any editor but invalid inside a URL.
+     */
+    private static String sanitize(String value) {
+        return value == null ? "" : value.replaceAll("\\p{Cf}", "").trim();
     }
 
     @Override
@@ -43,10 +53,16 @@ public class ProxyAiSurveyGenerator implements AiSurveyGenerator {
     }
 
     private String callProxy(String prompt) throws AiGenerationException {
+        String fullUrl;
         try {
             String encodedPrompt = URLEncoder.encode(prompt, StandardCharsets.UTF_8);
-            String fullUrl = baseUrl + "?token=" + token + "&text=" + encodedPrompt;
+            String encodedToken = URLEncoder.encode(token, StandardCharsets.UTF_8);
+            fullUrl = baseUrl + "?token=" + encodedToken + "&text=" + encodedPrompt;
+        } catch (RuntimeException e) {
+            throw new AiGenerationException("טוקן ה-AI בקובץ ההגדרות אינו תקין - בדוק שאין רווחים או תווים נסתרים.", e);
+        }
 
+        try {
             HttpURLConnection connection = (HttpURLConnection) URI.create(fullUrl).toURL().openConnection();
             connection.setRequestMethod("GET");
             connection.setConnectTimeout(15000);
